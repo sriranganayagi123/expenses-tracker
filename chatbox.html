@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Simple Chatbot</title>
+<style>
+  body { font-family: Arial, sans-serif; background: #f9f9f9; padding: 20px; }
+  #chatbox { width: 400px; margin: 0 auto; background: white; border: 1px solid #ccc; padding: 10px; border-radius: 5px; }
+  #chatlogs { height: 300px; overflow-y: auto; border-bottom: 1px solid #ccc; padding: 10px; }
+  .chat { margin: 5px 0; }
+  .user { text-align: right; color: blue; }
+  .bot { text-align: left; color: green; }
+  input[type=text] { width: 80%; padding: 10px; margin-top: 10px; }
+  button { padding: 10px; }
+</style>
+</head>
+<body>
+
+<div id="chatbox">
+  <div id="chatlogs"></div>
+  <input type="text" id="userInput" placeholder="Type your message..." />
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<script>
+  const chatlogs = document.getElementById('chatlogs');
+  const userInput = document.getElementById('userInput');
+
+  // Simple predefined responses
+  const responses = {
+    "hi": "Hello! How can I assist you today?",
+    "hello": "Hi there! What can I do for you?",
+    "how are you": "I'm just a bot, but I'm doing great! Thanks for asking.",
+    "what is your name": "I'm your friendly chatbot.",
+    "bye": "Goodbye! Have a great day!"
+  };
+
+  function sendMessage() {
+    const userText = userInput.value.trim().toLowerCase();
+    if (!userText) return;
+
+    // Display user message
+    appendMessage(userText, 'user');
+    userInput.value = '';
+
+    // Check response
+    let botReply = responses[userText];
+    if (!botReply) {
+      botReply = "Sorry, I don't understand that. Try saying 'hi' or 'what is your name'.";
+    }
+
+    // Simulate bot typing delay
+    setTimeout(() => {
+      appendMessage(botReply, 'bot');
+    }, 500);
+  }
+
+  function appendMessage(message, sender) {
+    const div = document.createElement('div');
+    div.classList.add('chat', sender);
+    div.textContent = message;
+    chatlogs.appendChild(div);
+    chatlogs.scrollTop = chatlogs.scrollHeight;
+  }
+
+  // Allow Enter key to send message
+  userInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      sendMessage();
+    }
+  });
+</script>
+
+</body>
+</html>
