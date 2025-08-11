@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Playful Bill Tracker</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Reset */
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+    body {
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #DCC6E0 0%, #FBCFE8 100%);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Background blobs */
+    body::before, body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.4;
+      z-index: 0;
+      animation: blobMove 15s ease-in-out infinite alternate;
+    }
+    body::before {
+      width: 400px;
+      height: 400px;
+      background: #B998CA;
+      top: -150px;
+      left: -150px;
+    }
+    body::after {
+      width: 450px;
+      height: 450px;
+      background: #F6B0CF;
+      bottom: -150px;
+      right: -150px;
+      animation-delay: 7s;
+    }
+
+    @keyframes blobMove {
+      0% { transform: translate(0,0) scale(1);}
+      100% { transform: translate(25px, 25px) scale(1.1);}
+    }
+
+    /* Container */
+    .container {
+      position: relative;
+      background: #fff0f8;
+      border: 6px solid #b589d6;
+      border-radius: 40px;
+      max-width: 520px;
+      width: 100%;
+      padding: 3rem 3rem 3.5rem 3rem;
+      box-shadow:
+        inset 0 0 30px #d9bbf5aa,
+        0 25px 45px rgba(181, 137, 222, 0.3);
+      z-index: 10;
+      animation: floatUp 4s ease-in-out infinite alternate;
+    }
+    @keyframes floatUp {
+      0% { transform: translateY(0);}
+      100% { transform: translateY(-12px);}
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 3.5rem;
+      color: #7846a6;
+      margin-bottom: 2rem;
+      letter-spacing: 0.12rem;
+      user-select: none;
+      text-align: center;
+      text-shadow: 1px 1px 5px #bb9feb88;
+    }
+
+    /* Upload area */
+    .upload-area {
+      border: 3.5px dashed #a88ac9;
+      border-radius: 28px;
+      padding: 1.6rem 1.2rem;
+      text-align: center;
+      background: #f8e9fb;
+      cursor: pointer;
+      font-weight: 600;
+      color: #7a549e;
+      font-size: 1.2rem;
+      box-shadow: 0 6px 15px #d1b2f8cc;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      transition: background 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+      margin-bottom: 1.8rem;
+    }
+    .upload-area:hover,
+    .upload-area:focus-visible {
+      background: #e5d1fb;
+      border-color: #6e3db6;
+      box-shadow: 0 8px 25px #b293f4cc;
+      outline: none;
+    }
+    .upload-area input[type="file"] {
+      position: absolute;
+      left: 0; top: 0; right: 0; bottom: 0;
+      width: 100%; height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* Image preview */
+    #preview {
+      margin: 1rem auto 2.5rem auto;
+      max-width: 90%;
+      border-radius: 25px;
+      box-shadow:
+        0 0 20px 5px #b68fdc88,
+        0 0 35px 9px #ab82f888 inset;
+      animation: bounceScale 3.5s ease-in-out infinite;
+      display: block;
+    }
+    @keyframes bounceScale {
+      0%, 100% { transform: scale(1) translateY(0);}
+      50% { transform: scale(1.07) translateY(-10px);}
+    }
+
+    /* Form */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.6rem;
+    }
+    label {
+      font-weight: 700;
+      color: #704899;
+      font-size: 1.1rem;
+      letter-spacing: 0.05rem;
+      user-select: none;
+    }
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    textarea {
+      padding: 1rem 1.3rem;
+      border-radius: 30px;
+      border: 3px solid #c9b7e8;
+      font-size: 1.1rem;
+      outline-offset: 3px;
+      box-shadow: 0 0 16px #d4b7f9bb inset;
+      font-family: inherit;
+      color: #5e3e8c;
+      transition: all 0.4s ease;
+      resize: vertical;
+    }
+    input[type="text"]:focus,
+    input[type="number"]:focus,
+    input[type="date"]:focus,
+    textarea:focus {
+      border-color: #804eee;
+      box-shadow: 0 0 22px #9562ffdd, 0 0 10px #7d51dbcc inset;
+      background: #f4eaff;
+    }
+
+    textarea {
+      min-height: 90px;
+    }
+
+    /* Buttons */
+    .btn {
+      background: linear-gradient(135deg, #9368f9, #d0a9ff);
+      border: none;
+      color: white;
+      font-weight: 700;
+      border-radius: 35px;
+      padding: 1.1rem 2.2rem;
+      font-size: 1.3rem;
+      cursor: pointer;
+      box-shadow:
+        0 0 15px #9f7bffcc,
+        0 10px 40px #a073ffbb;
+      user-select: none;
+      align-self: center;
+      min-width: 170px;
+      letter-spacing: 0.1rem;
+      animation: pulseGlow 3.5s ease-in-out infinite;
+      transition: all 0.35s ease;
+    }
+    .btn:hover {
+      filter: drop-shadow(0 0 18px #b6a7ffcc);
+      transform: scale(1.1);
+      box-shadow:
+        0 0 20px #bd9dffdd,
+        0 14px 50px #bd9dffcc;
+    }
+    .btn:active {
+      transform: scale(0.95);
+      box-shadow: 0 4px 15px #996effaa;
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% {
+        box-shadow:
+          0 0 15px #9f7bffcc,
+          0 10px 40px #a073ffbb;
+      }
+      50% {
+        box-shadow:
+          0 0 28px #bb99ffdd,
+          0 16px 55px #b68dffdd;
+      }
+    }
+
+    .btn-secondary {
+      background: #d9c3ff;
+      color: #4e3f8c;
+      box-shadow: none;
+      font-weight: 600;
+      min-width: auto;
+      padding: 0.9rem 1.9rem;
+      align-self: flex-start;
+      border-radius: 30px;
+      transition: background 0.3s ease;
+      letter-spacing: 0.05rem;
+    }
+    .btn-secondary:hover {
+      background: #c5a9ff;
+      box-shadow: 0 5px 15px #aa8dffbb;
+      transform: scale(1.07);
+    }
+
+    /* Summary */
+    .summary {
+      background: #f0defc;
+      padding: 2rem 2.5rem;
+      border-radius: 30px;
+      box-shadow:
+        0 8px 25px #cbb0ffcc;
+      margin-top: 3rem;
+      font-weight: 600;
+      color: #5b379f;
+      letter-spacing: 0.05rem;
+      animation: fadeInUp 1.1s ease forwards;
+      user-select: none;
+      font-size: 1.25rem;
+    }
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .summary h2 {
+      font-weight: 700;
+      font-size: 2.8rem;
+      margin-bottom: 1.2rem;
+      text-align: center;
+      text-shadow: 1px 1px 6px #bfaaffcc;
+    }
+
+    .summary p {
+      margin: 0.6rem 0;
+      line-height: 1.5;
+    }
+    .summary strong {
+      color: #804eee;
+    }
+
+    #top-vendor-container {
+      margin-top: 1rem;
+      font-style: italic;
+      font-weight: 500;
+      color: #613e99;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container {
+        padding: 2.5rem 2rem 3rem 2rem;
+        border-radius: 32px;
+      }
+      h1 {
+        font-size: 2.8rem;
+      }
+      .btn {
+        width: 100%;
+        min-width: unset;
+        font-size: 1.15rem;
+      }
+      .btn-secondary {
+        align-self: center;
+        width: 100%;
+        font-size: 1.05rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <main class="container" role="main" aria-label="Playful Payment Bill Tracker Form">
+
+    <h1>Bill Tracker</h1>
+
+    <label for="bill-image" class="upload-area" tabindex="0" aria-describedby="uploadHelp">
+      📸 Click or Tap to Upload or Snap Your Payment Bill
+      <input type="file" accept="image/*" capture="environment" id="bill-image" aria-describedby="uploadHelp" />
+    </label>
+
+    <img id="preview" alt="Payment bill preview" style="display:none;"/>
+
+    <form id="bill-form" novalidate>
+      <label for="amount">Amount (₹) *</label>
+      <input type="number" id="amount" name="amount" placeholder="How much did you spend?" required min="0" step="0.01" autocomplete="off" />
+
+      <label for="date">Date *</label>
+      <input type="date" id="date" name="date" required />
+
+      <label for="vendor">Vendor / Shop *</label>
+      <input type="text" id="vendor" name="vendor" placeholder="Where did you spend?" required autocomplete="off" />
+
+      <label for="notes">Extra Notes</label>
+      <textarea id="notes" name="notes" placeholder="Optional notes about this bill"></textarea>
+
+      <div style="margin-top:2rem; display:flex; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+        <button type="submit" class="btn" aria-label="Save bill">💜 Save Bill</button>
+        <button type="button" class="btn btn-secondary" id="clear-form" aria-label="Clear form">🧹 Clear</button>
+      </div>
+    </form>
+
+    <section class="summary" id="summary" style="display:none;" aria-live="polite" aria-atomic="true">
+      <h2>Spending Summary</h2>
+      <p>Total Bills Recorded: <strong id="total-bills">0</strong></p>
+      <p>Total Spent: <strong id="total-spent">₹ 0.00</strong></p>
+      <div id="top-vendor-container" style="display:none;">
+        <p>Top Spending Vendor: <strong id="top-vendor"></strong></p>
+        <p>Suggestion: <span id="suggestion"></span></p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    (() => {
+      const fileInput = document.getElementById('bill-image');
+      const preview = document.getElementById('preview');
+      const form = document.getElementById('bill-form');
+      const clearBtn = document.getElementById('clear-form');
+
+      const summary = document.getElementById('summary');
+      const totalBillsEl = document.getElementById('total-bills');
+      const totalSpentEl = document.getElementById('total-spent');
+      const topVendorContainer = document.getElementById('top-vendor-container');
+      const topVendorEl = document.getElementById('top-vendor');
+      const suggestionEl = document.getElementById('suggestion');
+
+      const STORAGE_KEY = 'playfulBills_v1';
+
+      let bills = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+
+      fileInput.addEventListener('change', e => {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            preview.src = reader.result;
+            preview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          preview.src = '';
+          preview.style.display = 'none';
+        }
+      });
+
+      function clearForm() {
+        form.reset();
+        preview.src = '';
+        preview.style.display = 'none';
+      }
+      clearBtn.addEventListener('click', clearForm);
+
+      function saveBills() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bills));
+      }
+
+      function addBill(bill) {
+        bills.push(bill);
+        saveBills();
+        updateSummary();
+      }
+
+      function updateSummary() {
+        if (bills.length === 0) {
+          summary.style.display = 'none';
+          return;
+        }
+
+        summary.style.display = 'block';
+        totalBillsEl.textContent = bills.length;
+
+        const totalSpent = bills.reduce((sum, b) => sum + parseFloat(b.amount), 0);
+        totalSpentEl.textContent = `₹ ${totalSpent.toFixed(2)}`;
+
+        const vendorTotals = {};
+        bills.forEach(({ vendor, amount }) => {
+          const v = vendor.trim().toLowerCase();
+          vendorTotals[v] = (vendorTotals[v] || 0) + parseFloat(amount);
+        });
+
+        const topVendor = Object.entries(vendorTotals).reduce((max, current) => current[1] > max[1] ? current : max, ['', 0]);
+        if (topVendor[0] === '') {
+          topVendorContainer.style.display = 'none';
+          return;
+        }
+
+        topVendorContainer.style.display = 'block';
+        topVendorEl.textContent = capitalizeWords(topVendor[0]);
+
+        const topVendorPercent = (topVendor[1] / totalSpent) * 100;
+        if (topVendorPercent > 40) {
+          suggestionEl.textContent = `Whoa! You spend ${topVendorPercent.toFixed(0)}% here — maybe try budgeting or finding cheaper options.`;
+        } else if (topVendorPercent > 20) {
+          suggestionEl.textContent = `Heads up! ${topVendorPercent.toFixed(0)}% of your spending is here. Keep an eye on it.`;
+        } else {
+          suggestionEl.textContent = `Nice! Your spending is well balanced. Keep it up!`;
+        }
+      }
+
+      function capitalizeWords(str) {
+        return str.replace(/\b\w/g, c => c.toUpperCase());
+      }
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+
+        const amount = form.amount.value.trim();
+        const date = form.date.value.trim();
+        const vendor = form.vendor.value.trim();
+        const notes = form.notes.value.trim();
+
+        if (!amount || isNaN(amount) || Number(amount) <= 0) {
+          alert('Please enter a valid amount greater than 0.');
+          return;
+        }
+        if (!date) {
+          alert('Please select a date.');
+          return;
+        }
+        if (!vendor) {
+          alert('Please enter vendor/shop name.');
+          return;
+        }
+
+        const bill = {
+          id: Date.now(),
+          amount: Number(amount).toFixed(2),
+          date,
+          vendor,
+          notes,
+          image: preview.src || ''
+        };
+
+        addBill(bill);
+
+        alert('Bill saved! 💜');
+
+        clearForm();
+      });
+
+      updateSummary();
+
+    })();
+  </script>
+
+</body>
+</html>
+
